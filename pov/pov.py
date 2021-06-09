@@ -2,6 +2,7 @@ import cv2
 import datetime
 import fn
 import os
+from PIL import Image
 from pathlib import Path
 
 class Camera(object):
@@ -24,7 +25,8 @@ class Camera(object):
             os.mkdir(self.savedir)
         
     def get_image(self):
-        got_image, image = self.cam.read()
+        got_image, _image = self.cam.read()
+        image = cv2.cvtColor(_image, cv2.COLOR_RGB2BGR)
         return image
     
     def close(self):
@@ -36,6 +38,28 @@ class Camera(object):
         filepath = self.savedir.joinpath(f'{now}.jpg').as_posix()
         cv2.imwrite(filepath, img)
         self.most_recent_image_filepath = filepath
+        
+    def preview(self):
+        img = self.get_image()
+        return Image.fromarray(img)
+    
+    def video_preview(self):
+        
+        print('hit q to quit')
+        while(True):
+            frame = self.get_image()
+        
+            # Display the resulting frame
+            cv2.imshow('frame', frame)
+            
+            # the 'q' button is set as the
+            # quitting button you may use any
+            # desired button of your choice
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        
+        # Destroy all the windows
+        cv2.destroyAllWindows()
         
     
 
