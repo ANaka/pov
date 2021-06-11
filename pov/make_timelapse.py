@@ -20,10 +20,9 @@ def make_timelapse(
     ):
     if input_dir == None:
         plot_id = fn.get_current_plot_id()
-        if input_dir == None:
-            input_dir = Path(ROOT_DIRECTORY).joinpath(plot_id)
-        if output == None:
-            output = input_dir.joinpath('movie.mp4')
+        input_dir = Path(ROOT_DIRECTORY).joinpath(plot_id)
+    if output == None:
+        output = input_dir.joinpath('movie.mp4')
     try:
         (
             ffmpeg
