@@ -4,6 +4,7 @@ import fn
 import os
 from PIL import Image
 from pathlib import Path
+import time
 
 class Camera(object):
     """for recording images from streaming source. right now assumes only one video source will be available
@@ -60,6 +61,24 @@ class Camera(object):
         
         # Destroy all the windows
         cv2.destroyAllWindows()
+        
+    def get_video(self, wait_time=0.):
+        print('hit q to quit')
+        while(True):
+            frame = self.get_image()
+            now = get_current_timestamp()
+            frame = self.get_image()
+            filepath = self.savedir.joinpath(f'{now}.jpg').as_posix()
+            cv2.imwrite(filepath, frame)
+            # Display the resulting frame
+            cv2.imshow('frame', frame)
+            
+            # the 'q' button is set as the
+            # quitting button you may use any
+            # desired button of your choice
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            time.sleep(wait_time)
         
     
 
