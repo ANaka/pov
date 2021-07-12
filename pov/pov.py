@@ -5,6 +5,7 @@ import os
 from PIL import Image
 from pathlib import Path
 import time
+import numpy as np
 
 class Camera(object):
     """for recording images from streaming source. right now assumes only one video source will be available
@@ -62,17 +63,33 @@ class Camera(object):
         # Destroy all the windows
         cv2.destroyAllWindows()
         
-    def get_video(self, wait_time=0.):
+    def get_video(
+        self, 
+        wait_time:float=0., # seconds
+        duration:float=np.inf, # seconds
+        ):
+        
         print('hit q to quit')
+        self.n_frames_captured = 0
         while(True):
+            
+            if self.n_frames_captured == 0:
+                self.video_start_time = datetime.datetime.now()
+                self.elapsed_time = 0
+            elif self.n_frames_captured > 0:
+                self.elapsed_time = (datetime.datetime.now() - self.video_start_time).total_seconds()
+                
+            if self.elapsed_time > duration:
+                break
+            
             frame = self.get_image()
             now = get_current_timestamp()
-            frame = self.get_image()
             filepath = self.savedir.joinpath(f'{now}.jpg').as_posix()
             cv2.imwrite(filepath, frame)
             # Display the resulting frame
             cv2.imshow('frame', frame)
             
+            self.n_frames_captured += 1
             # the 'q' button is set as the
             # quitting button you may use any
             # desired button of your choice
